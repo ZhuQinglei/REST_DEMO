@@ -1,6 +1,5 @@
 # REST_DEMO
 Sample code for Restful request with TypeScript
-<<<<<<< HEAD
 
 ----
 
@@ -12,5 +11,3 @@ Sample code for Restful request with TypeScript
 4. Install dependencies: ```npm install```
 5. Compile: ```webpack```
 6. Run the app by opening index.html in the browser
-=======
->>>>>>> 79d7d3d9ca9c653e7ec6964c711f04c811d804d2
