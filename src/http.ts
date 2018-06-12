@@ -3,7 +3,7 @@ import { Promise } from 'es6-promise';
 // Using callbacks:
 export class HTTPClient {
     request<Request, Response>(
-        method: 'GET' | 'POST',
+        method: 'GET' | 'POST' | 'DELETE' | 'PUT',
         url: string,
         content?: Request,
         callback?: (response: Response) => void,
@@ -28,7 +28,7 @@ export class HTTPClient {
             // There was a connection error of some sort
             errorCallback && errorCallback(err);
         };
-        if (method === 'POST') {
+        if (method === 'POST' || method === 'PUT' || method === 'DELETE') {
             request.setRequestHeader(
                 'Content-Type',
                 'application/x-www-form-urlencoded; charset=UTF-8');
@@ -38,7 +38,7 @@ export class HTTPClient {
 
     // Using promises:
     requestPromise<Request, Response>(
-        method: 'GET' | 'POST',
+        method: 'GET' | 'POST' | 'DELETE' | 'PUT',
         url: string,
         content?: Request
     ): Promise<Response> {

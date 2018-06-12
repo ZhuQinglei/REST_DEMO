@@ -1512,16 +1512,31 @@ return Promise$1;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 const userService_1 = __webpack_require__(/*! ./userService */ "./src/userService.ts");
-//  class AppComponent {
-//   showUser = true;
-//   toggleUser() { this.showUser = !this.showUser; }
-// }
-// function getUsers(){
-//   let service:UsersService;
-//   service.getUsers()
-// }
-// export class UsersComponent {
+// Data
 let users;
+let editUser = {
+    id: 1,
+    address: {
+        street: "Kulas Light",
+        suite: "Apt. 556",
+        city: "Gwenborough",
+        zipcode: "92998-3874",
+        geo: {
+            lat: "-37.3159",
+            lng: "81.1496"
+        }
+    },
+    company: {
+        name: "Romaguera-Crona",
+        catchPhrase: "Multi-layered client-server neural-net",
+        bs: "harness real-time e-markets"
+    },
+    email: "Sincere@april.biz",
+    name: "Leanne Graham",
+    phone: "1-770-736-8031",
+    username: "Bret",
+    website: "hildegard.org"
+};
 let newUser = {
     address: {
         street: "Kulas Light",
@@ -1544,93 +1559,45 @@ let newUser = {
     username: "Bret",
     website: "hildegard.org"
 };
-// edituser: User; // the user currently being edited
-// error: any;
-// headers: string[];
-// showForm = false;
-// newUser: User;
 let usersService = new userService_1.UsersService();
-// constructor() {
-// }
-//  ngOnInit() {
-//    this.getUsers();
-//  }
+// functions
 function getUsers() {
     console.log("get users");
-    usersService.getUsers();
-    // .subscribe(resp => {
-    //   // display its headers
-    //   const keys = resp.headers.keys();
-    //   this.headers = keys.map(key =>
-    //     `${key}: ${resp.headers.get(key)}`);
-    //   this.users = [...resp.body];
-    //   console.log(resp);
-    // });
+    usersService.getUsers().then(res => {
+        users = res;
+    }).catch(err => {
+        console.log(err);
+    });
+}
+function getUser(id) {
+    console.log("get user 1");
+    usersService.getUser(id).then(res => {
+        console.log(res);
+    }).catch(err => {
+        console.log(err);
+    });
 }
 function add(user) {
-    usersService.addUser(newUser);
+    console.log("post user");
+    usersService.addUser(user);
 }
-// add(user: User): void {
-//   this.edituser = undefined;
-//   if (!user) { return; }
-//   // The server will generate the id for this new user
-//   this.usersService.addUser(user)
-//     .subscribe(user => {
-//       console.log(user)
-//       this.users.push(user)
-//     });
-// }
-// delete(user: User): void {
-//   this.users = this.users.filter(h => h !== user);
-//   this.usersService.deleteUser(user.id).subscribe(
-//     res => {
-//       console.log(res)
-//     });
-// }
-// edit(user) {
-//   this.edituser = user;
-// }
-// search(searchTerm: string) {
-//   this.edituser = undefined;
-//   if (searchTerm) {
-//     this.usersService.searchUsers(searchTerm)
-//       .subscribe(users => this.users = users);
-//   }
-// }
-// update() {
-//   if (this.edituser) {
-//     this.usersService.updateUser(this.edituser)
-//       .subscribe(user => {
-//         console.log(user)
-//         // replace the user in the useres list with update from server
-//         const ix = user ? this.users.findIndex(h => h.id === user.id) : -1;
-//         if (ix > -1) { this.users[ix] = user; }
-//       });
-//     this.edituser = undefined;
-//   }
-// }
-// toggleForm() {
-//   this.showForm = !this.showForm;
-//   if (this.showForm) {
-//     this.resetUser()
-//   }
-// }
-// resetUser() {
-//   this.newUser = {
-//     address: undefined,
-//     company: undefined,
-//     email: undefined,
-//     id: undefined,
-//     name: undefined,
-//     phone: undefined,
-//     username: undefined,
-//     website: undefined
-//   }
-// }
-// }
-// let app = new UsersComponent();
+function updateUser(user) {
+    console.log("update user");
+    usersService.updateUser(user).then(res => {
+        console.log(res);
+    }).catch(err => {
+        console.log(err);
+    });
+}
+function deleteUser(id) {
+    console.log("delete user");
+    usersService.deleteUser(id);
+}
 document.getElementById("getUsers").addEventListener("click", e => getUsers());
+document.getElementById("getUser1").addEventListener("click", e => getUser(1));
 document.getElementById("postUser").addEventListener("click", e => add(newUser));
+document.getElementById("updateUser").addEventListener("click", e => updateUser(editUser));
+document.getElementById("deleteUser").addEventListener("click", e => deleteUser(10));
 
 
 /***/ }),
@@ -1668,7 +1635,7 @@ class HTTPClient {
             // There was a connection error of some sort
             errorCallback && errorCallback(err);
         };
-        if (method === 'POST') {
+        if (method === 'POST' || method === 'PUT' || method === 'DELETE') {
             request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8');
         }
         request.send(content);
@@ -1697,22 +1664,11 @@ exports.HTTPClient = HTTPClient;
 Object.defineProperty(exports, "__esModule", { value: true });
 const http_1 = __webpack_require__(/*! ./http */ "./src/http.ts");
 const es6_promise_1 = __webpack_require__(/*! es6-promise */ "./node_modules/es6-promise/dist/es6-promise.js");
-// const httpOptions = {
-//   headers: new HttpHeaders({
-//     'Content-Type': 'application/json',
-//     'Authorization': 'my-auth-token'
-//   })
-// };
 class UsersService {
-    //private handleError: HandleError;
     constructor() {
         this.usersUrl = 'https://jsonplaceholder.typicode.com/users'; // URL to web api
         this.http = new http_1.HTTPClient();
     }
-    //   getUserResponse(): Observable<HttpResponse<User>> {
-    //     return this.requestPromise.get<User>(
-    //       this.usersUrl, { observe: 'response' });
-    //   }
     /** GET users from the server */
     getUsers() {
         return this.http.requestPromise('GET', this.usersUrl, null)
@@ -1724,31 +1680,51 @@ class UsersService {
             return es6_promise_1.Promise.reject(new Error('something bad happened'));
         });
     }
-    /* GET heroes whose name contains search term */
-    // searchUsers(term: string): Observable<User[]> {
-    //   term = term.trim();
-    //   // Add safe, URL encoded search parameter if there is a search term
-    //   const options = term ?
-    //    { params: new HttpParams().set('title', term) } : {};
-    //   return this.http.get<User[]>(this.usersUrl, options)
-    //     .pipe(
-    //       catchError(this.handleError<User[]>('searchUsers', []))
-    //     );
-    // }
+    getUser(id) {
+        const url = `${this.usersUrl}/${id}`;
+        return this.http.requestPromise('GET', url, null)
+            .then(resp => {
+            console.log(resp);
+            return es6_promise_1.Promise.resolve(resp);
+        }).catch(err => {
+            console.log(err.message);
+            return es6_promise_1.Promise.reject(new Error('something bad happened'));
+        });
+    }
     //////// Save methods //////////
     /** POST: add a new user to the database */
-    // addUser(user: User): Observable<User> {
-    //     return this.http.post<User>(this.usersUrl, user, httpOptions)
-    //         .pipe(
-    //             catchError(this.handleError('addUser', user))
-    //         );
-    // }
     addUser(user) {
         return this.http.requestPromise('POST', this.usersUrl, user)
             .then(resp => {
             console.log('no error');
             console.log(resp);
             return es6_promise_1.Promise.resolve();
+        }).catch(err => {
+            console.log(err.message);
+            return es6_promise_1.Promise.reject(new Error('something bad happened'));
+        });
+    }
+    /** DELETE: delete the user from the server */
+    deleteUser(id) {
+        const url = `${this.usersUrl}/${id}`;
+        return this.http.requestPromise('DELETE', url, id)
+            .then(resp => {
+            console.log('no error');
+            console.log(resp);
+            return es6_promise_1.Promise.resolve();
+        }).catch(err => {
+            console.log(err.message);
+            return es6_promise_1.Promise.reject(new Error('something bad happened'));
+        });
+    }
+    /** PUT: update the user on the server. Returns the updated user upon success. */
+    updateUser(user) {
+        const url = `${this.usersUrl}/${user.id}`;
+        return this.http.requestPromise('PUT', url, user)
+            .then(resp => {
+            console.log('no error');
+            console.log(resp);
+            return es6_promise_1.Promise.resolve(resp);
         }).catch(err => {
             console.log(err.message);
             return es6_promise_1.Promise.reject(new Error('something bad happened'));

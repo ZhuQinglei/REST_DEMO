@@ -19,7 +19,17 @@ export class UsersService {
                 return Promise.reject(new Error('something bad happened'))
             })
     }
-
+    getUser(id: number): Promise<User> {
+        const url = `${this.usersUrl}/${id}`;
+        return this.http.requestPromise<null, Response>('GET', url, null)
+            .then(resp => {
+                console.log(resp)
+                return Promise.resolve(resp);
+            }).catch(err => {
+                console.log(err.message);
+                return Promise.reject(new Error('something bad happened'))
+            })
+    }
     //////// Save methods //////////
 
     /** POST: add a new user to the database */
@@ -35,25 +45,31 @@ export class UsersService {
             })
     }
     
-    // /** DELETE: delete the user from the server */
-    // deleteUser(id: number): Observable<{}> {
-    //     const url = `${this.usersUrl}/${id}`;
-    //     return this.http.delete(url, httpOptions)
-    //         .pipe(
-    //             catchError(this.handleError('deleteUser'))
-    //         );
-    // }
+    /** DELETE: delete the user from the server */
+    deleteUser(id: number): Promise<void> {
+        const url = `${this.usersUrl}/${id}`;
+        return this.http.requestPromise('DELETE', url, id)
+            .then(resp => {
+                console.log('no error')
+                console.log(resp)
+                return Promise.resolve();
+            }).catch(err => {
+                console.log(err.message)
+                return Promise.reject(new Error('something bad happened'))
+            })
+    }
 
-    // /** PUT: update the user on the server. Returns the updated user upon success. */
-    // updateUser(user: User): Observable<User> {
-    //     httpOptions.headers =
-    //         httpOptions.headers.set('Authorization', 'my-new-auth-token');
-
-    //     const url = `${this.usersUrl}/${user.id}`;
-    //     return this.http.put<User>(url, user, httpOptions)
-    //         .pipe(
-    //             catchError(this.handleError('updateUser', user))
-    //         );
-    // }
-
+    /** PUT: update the user on the server. Returns the updated user upon success. */
+    updateUser(user: User): Promise<User>  {
+        const url = `${this.usersUrl}/${user.id}`;
+        return this.http.requestPromise('PUT', url, user)
+            .then(resp => {
+                console.log('no error')
+                console.log(resp)
+                return Promise.resolve(resp);
+            }).catch(err => {
+                console.log(err.message)
+                return Promise.reject(new Error('something bad happened'))
+            })
+    }
 }
